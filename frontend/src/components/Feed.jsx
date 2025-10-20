@@ -3,15 +3,16 @@ import MessageCard from "./MessageCard"
 import { fetchMessages } from "../api/api"
 import MessageField from "./MessageField"
 import { useUserStore } from "../store/store"
+import { useMessagesStore } from "../store/useMessageStore"
 
 const Feed = () => {
-    const [messages, setMessages] = useState(undefined)
+    const {messages, getMessages} = useMessagesStore()
     const { jwt } = useUserStore()
 
     useEffect(() => {
         const handleFetch = async () => {
             try {
-                setMessages(await fetchMessages())
+               getMessages()
             } catch (err) {
                 console.error(err)
             }

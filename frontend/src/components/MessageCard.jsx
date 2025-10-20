@@ -1,6 +1,38 @@
 import { deleteMessage, likeMessage, reportMessage } from "../api/api"
+import { useUserStore } from "../store/store"
+import { useMessagesStore } from "../store/useMessageStore"
 
-const MessageCard = ({ content, createdAt, username, userId, id }) => {
+const MessageCard = ({ content, createdAt, username, userId, id, likes,likeBy }) => {
+    const loggedUserId = useUserStore((state) => state.jwt.userId)
+    const {getMessages} = useMessagesStore()
+    
+        const handelDelete = async () =>{
+    try {      
+        await deleteMessage(id)
+        await getMessages()
+    } catch (error) {
+        console.error(error)
+    }
+    
+    }
+
+    const handleReport = async () => {
+        try {
+            await reportMessage(id)
+            await getMessages()
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+    const handelLike = async () => {
+        try {
+            await likeMessage(id)
+            await getMessages()
+        } catch (error) {
+            console.error(error)
+        }
+    }
     return (
         <div className="message-card">
             <div className="message-content">{content}</div>
@@ -10,16 +42,16 @@ const MessageCard = ({ content, createdAt, username, userId, id }) => {
             </div>
             <div className="message-actions">
                 <button
-                    onClick={() => likeMessage(id)}
+                    onClick={handelLike}
                     className="action-button"
                 >
-                    <span>❤️🤍</span>
-                    <span>0</span>
+                    <span>{likedBy.contains((el) => el == loggedUserId )}❤️🤍</span>
+                    <span>{likes}</span>
                 </button>
             </div>
             <div className="message-actions">
                 <button
-                    onClick={() => reportMessage(id)}
+                    onClick={handleReport}
                     className="action-button"
                 >
                     <span>🚩</span>
@@ -28,7 +60,7 @@ const MessageCard = ({ content, createdAt, username, userId, id }) => {
             </div>
             <div className="message-actions">
                 <button
-                    onClick={() => deleteMessage(id)}
+                    onClick={handelDelete}
                     className="action-button delete"
                 >
                     <span>🗑️</span>
